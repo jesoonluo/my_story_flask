@@ -7,7 +7,7 @@ from wtforms import StringField,SubmitField
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://luojian:123456@localhost/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql@localhost/luojianmei'
 #app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY']='luo_h'
@@ -90,6 +90,7 @@ def delete_author(id):
     #精确查找对应的作者信息
     au = Author.query.filter_by(id=id).first()
     db.session.delete(au)
+    db.session.commit()
     #直接重定向到index视图函数
     return redirect(url_for('index'))
 
@@ -99,6 +100,7 @@ def delete_book(id):
     #精确查询需要删除的书名id
     bk = Book.query.filter_by(id=id).first()
     db.session.delete(bk)
+    db.session.commit()
     #直接重定向到index视图函数
     return redirect(url_for('index'))
 
@@ -118,16 +120,5 @@ if __name__ == '__main__':
     db.session.add_all([au_xi,au_qian,au_san,bk_xi,bk_xi2,bk_qian,bk_san])
     #提交会话
     db.session.commit()
-    from blueprints.delete_infos import delete_info
-    app.register_blueprint(delete_info)
     print(app.url_map)
-    manager.run()
-
-    '''
-    # 导出excel表
-    import pandas
-    df_date = pandas.DataFrame.from_dict(total_data,orient='columns',dtype=None)
-    print(df_date)
-    df_date.to_excel('test1.xlsx',sheet_name='利息收入统计表',index=False)
-
-    '''
+    app.run()
